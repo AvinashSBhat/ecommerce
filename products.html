@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>LUXE Store — Products</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<div id="cur"></div><div id="curR"></div>
+<div id="cartSidebarMount"></div>
+<div id="toastMount"></div>
+<div id="navMount"></div>
+
+<div class="page-wrap">
+
+  <!-- HERO BANNER -->
+  <div class="page-hero">
+    <div class="section-label">Our Collection</div>
+    <h1>All Products</h1>
+    <p>Browse our full collection of premium products across all categories</p>
+  </div>
+
+  <!-- LAYOUT: SIDEBAR + GRID -->
+  <div class="products-layout">
+
+    <!-- ── FILTER SIDEBAR ── -->
+    <aside class="filter-sidebar">
+      <div class="filter-title">
+        Filters
+        <button class="filter-clear" onclick="clearFilters()">Clear All</button>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-group-title">Category</div>
+        <div class="filter-option"><input type="checkbox" id="f-all" onchange="applyFilters()"><label for="f-all">All Categories</label></div>
+        <div class="filter-option"><input type="checkbox" id="f-fashion" onchange="applyFilters()"><label for="f-fashion">Fashion (98)</label></div>
+        <div class="filter-option"><input type="checkbox" id="f-accessories" onchange="applyFilters()"><label for="f-accessories">Accessories (72)</label></div>
+        <div class="filter-option"><input type="checkbox" id="f-electronics" onchange="applyFilters()"><label for="f-electronics">Electronics (54)</label></div>
+        <div class="filter-option"><input type="checkbox" id="f-home" onchange="applyFilters()"><label for="f-home">Home & Living (116)</label></div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-group-title">Price Range</div>
+        <input type="range" class="price-range" id="priceRange" min="0" max="20000" value="20000" oninput="updatePriceLabel(this.value)">
+        <div class="price-labels"><span>₹0</span><span id="priceLabel">Up to ₹20,000</span></div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-group-title">Sort By</div>
+        <select class="sort-select" id="sortBy" onchange="applyFilters()">
+          <option value="default">Featured</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="rating">Top Rated</option>
+          <option value="newest">Newest First</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-group-title">Rating</div>
+        <div class="filter-option"><input type="checkbox" id="r4" onchange="applyFilters()"><label for="r4">4★ & above</label></div>
+        <div class="filter-option"><input type="checkbox" id="r3" onchange="applyFilters()"><label for="r3">3★ & above</label></div>
+      </div>
+    </aside>
+
+    <!-- ── PRODUCT MAIN ── -->
+    <div>
+      <div class="products-toolbar">
+        <div class="products-count" id="productsCount">Showing 0 products</div>
+        <div class="view-toggle">
+          <button class="view-btn active" id="gridViewBtn" onclick="setView('grid')">⊞</button>
+          <button class="view-btn" id="listViewBtn" onclick="setView('list')">☰</button>
+        </div>
+      </div>
+      <div class="all-products-grid" id="allProductsGrid"></div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+
+  </div><!-- end products-layout -->
+
+  <div id="footerMount"></div>
+</div><!-- end page-wrap -->
+
+<script src="app.js"></script>
+<script>
+  document.getElementById('navMount').innerHTML = renderNav('products');
+  document.getElementById('cartSidebarMount').innerHTML = renderCartSidebarHTML();
+  document.getElementById('toastMount').innerHTML = renderToastHTML();
+  renderFooter('footerMount');
+
+  /* ── Pagination state ── */
+  let filteredProducts = [...PRODUCTS];
+  let currentPage = 1;
+  const ITEMS_PER_PAGE = 6;
+
+  /* ── Read URL param for category filter ── */
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlCat = urlParams.get('cat');
+
+  function initFilters(){
+    if(urlCat && ['fashion','accessories','electronics','home'].includes(urlCat)){
+      document.getElementById('f-all').checked = false;
+      document.getElementById('f-'+urlCat).checked = true;
+    } else {
+      document.getElementById('f-all').checked = true;
+    }
+    applyFilters();
+  }
+
+  function applyFilters(){
+    let cats = [];
+    if(document.getElementById('f-all').checked){ cats = ['all']; }
+    else {
+      ['fashion','accessories','electronics','home'].forEach(c=>{
+        if(document.getElementById('f-'+c).checked) cats.push(c);
+      });
+      if(!cats.length) cats = ['all'];
+    }
+    const maxPrice = parseInt(document.getElementById('priceRange').value);
+    const sortVal  = document.getElementById('sortBy').value;
+    const r4 = document.getElementById('r4').checked;
+    const r3 = document.getElementById('r3').checked;
+    let items = [...PRODUCTS];
+    if(!cats.includes('all')) items = items.filter(p=>cats.includes(p.cat));
+    items = items.filter(p=>p.price <= maxPrice);
+    if(r4)      items = items.filter(p=>p.rating>=4);
+    else if(r3) items = items.filter(p=>p.rating>=3);
+    if(sortVal==='price-asc')  items.sort((a,b)=>a.price-b.price);
+    else if(sortVal==='price-desc') items.sort((a,b)=>b.price-a.price);
+    else if(sortVal==='rating')  items.sort((a,b)=>b.rating-a.rating);
+    else if(sortVal==='newest') items.sort((a,b)=>b.id-a.id);
+    filteredProducts = items;
+    currentPage = 1;
+    renderProductGrid();
+  }
+
+  function renderProductGrid(){
+    const grid  = document.getElementById('allProductsGrid');
+    const countEl = document.getElementById('productsCount');
+    const start = (currentPage-1)*ITEMS_PER_PAGE, end = start+ITEMS_PER_PAGE;
+    const pageItems = filteredProducts.slice(start, end);
+    countEl.textContent = `Showing ${filteredProducts.length} product${filteredProducts.length!==1?'s':''}`;
+    if(!pageItems.length){
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted);font-size:15px">No products match your filters.</div>';
+      document.getElementById('pagination').innerHTML = '';
+      return;
+    }
+    grid.innerHTML = pageItems.map(p=>productCardHTML(p)).join('');
+    renderPagination();
+  }
+
+  function renderPagination(){
+    const pag = document.getElementById('pagination');
+    const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+    if(totalPages <= 1){ pag.innerHTML=''; return; }
+    let html = '';
+    if(currentPage>1) html += `<button class="page-btn" onclick="goPage(${currentPage-1})">‹</button>`;
+    for(let i=1;i<=totalPages;i++) html += `<button class="page-btn${i===currentPage?' active':''}" onclick="goPage(${i})">${i}</button>`;
+    if(currentPage<totalPages) html += `<button class="page-btn" onclick="goPage(${currentPage+1})">›</button>`;
+    pag.innerHTML = html;
+  }
+
+  function goPage(n){ currentPage=n; renderProductGrid(); window.scrollTo({top:200,behavior:'smooth'}); }
+
+  function setView(v){
+    const grid = document.getElementById('allProductsGrid');
+    document.getElementById('gridViewBtn').classList.toggle('active', v==='grid');
+    document.getElementById('listViewBtn').classList.toggle('active', v==='list');
+    grid.classList.toggle('list-view', v==='list');
+  }
+
+  function clearFilters(){
+    ['fashion','accessories','electronics','home'].forEach(c=>document.getElementById('f-'+c).checked=false);
+    document.getElementById('f-all').checked = true;
+    document.getElementById('priceRange').value = 20000;
+    document.getElementById('priceLabel').textContent = 'Up to ₹20,000';
+    document.getElementById('sortBy').value = 'default';
+    document.getElementById('r4').checked = false;
+    document.getElementById('r3').checked = false;
+    applyFilters();
+  }
+
+  function updatePriceLabel(val){
+    document.getElementById('priceLabel').textContent = 'Up to ₹'+parseInt(val).toLocaleString('en-IN');
+    applyFilters();
+  }
+
+  initFilters();
+</script>
+</body>
+</html>
