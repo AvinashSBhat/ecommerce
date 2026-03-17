@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>LUXE Store — Product</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<div id="cur"></div><div id="curR"></div>
+<div id="cartSidebarMount"></div>
+<div id="toastMount"></div>
+<div id="navMount"></div>
+
+<div class="page-wrap detail-page">
+
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb">
+    <a href="index.html">Home</a>
+    <span class="breadcrumb-sep">›</span>
+    <a href="products.html">Products</a>
+    <span class="breadcrumb-sep">›</span>
+    <span id="detailBreadcrumb">Product</span>
+  </div>
+
+  <!-- PRODUCT GRID -->
+  <div class="detail-grid" id="detailGrid">
+    <!-- Populated by JS -->
+  </div>
+
+  <!-- RELATED PRODUCTS -->
+  <div style="padding:60px 60px 20px">
+    <div class="section-label">You May Also Like</div>
+    <h2 class="section-title" style="font-size:clamp(24px,2.5vw,36px);margin-bottom:32px">Related <em>Products</em></h2>
+    <div class="product-grid" id="relatedGrid" style="grid-template-columns:repeat(4,1fr)"></div>
+  </div>
+
+  <div id="footerMount"></div>
+</div>
+
+<script src="app.js"></script>
+<script>
+  document.getElementById('navMount').innerHTML = renderNav('products');
+  document.getElementById('cartSidebarMount').innerHTML = renderCartSidebarHTML();
+  document.getElementById('toastMount').innerHTML = renderToastHTML();
+  renderFooter('footerMount');
+
+  let detailQty = 1;
+  let currentProduct = null;
+
+  function loadProduct(){
+    const id = parseInt(new URLSearchParams(window.location.search).get('id'));
+    const p = PRODUCTS.find(x=>x.id===id) || PRODUCTS[0];
+    currentProduct = p;
+    document.title = `LUXE — ${p.name}`;
+    document.getElementById('detailBreadcrumb').textContent = p.name;
+
+    const discount = p.oldPrice ? Math.round((1-p.price/p.oldPrice)*100) : 0;
+    const stars = Array.from({length:5},(_,i)=>`<span class="star${i<Math.round(p.rating)?'':' e'}">★</span>`).join('');
+
+    const sizesHTML = p.sizes.map((s,i)=>
+      `<button class="size-opt${i===0?' active':''}" onclick="selectSize(this)">${s}</button>`
+    ).join('');
+
+    document.getElementById('detailGrid').innerHTML = `
+      <!-- IMAGES -->
+      <div class="detail-images">
+        <div class="detail-main-img ${p.bg}" id="mainImg" style="font-size:100px">${p.icon}</div>
+        <div class="detail-thumbs">
+          ${[0,1,2,3].map(i=>`
+            <div class="detail-thumb ${p.bg}${i===0?' active':''}" onclick="selectThumb(this,'${p.icon}')" style="font-size:28px">${p.icon}</div>
+          `).join('')}
+        </div>
+      </div>
+      <!-- INFO -->
+      <div class="detail-info">
+        <div class="detail-badges">
+          ${p.tag==='new' ? '<span class="tag new">New</span>' : ''}
+          ${p.tag==='sale' ? `<span class="tag sale">-${discount}%</span>` : ''}
+        </div>
+        <h1 class="detail-name">${p.name}</h1>
+        <div class="detail-rating-row">
+          <div class="rating">${stars}<span style="margin-left:6px;font-size:14px;font-weight:600">${p.rating}</span></div>
+          <span class="review-count">${p.reviews} reviews</span>
+          <span class="in-stock"><span class="stock-dot"></span>In Stock</span>
+        </div>
+        <div class="detail-price-block">
+          <span class="detail-price">₹${p.price.toLocaleString('en-IN')}</span>
+          ${p.oldPrice ? `<span class="detail-old-price">₹${p.oldPrice.toLocaleString('en-IN')}</span><span class="detail-discount">-${discount}%</span>` : ''}
+        </div>
+        <p class="detail-desc">${p.desc}</p>
+        <div class="option-group">
+          <div class="option-label">Size</div>
+          <div class="size-options">${sizesHTML}</div>
+        </div>
+        <div class="option-group">
+          <div class="option-label">Quantity</div>
+          <div class="qty-selector">
+            <button class="qs-btn" onclick="changeDetailQty(-1)">−</button>
+            <span class="qs-val" id="detailQtyVal">1</span>
+            <button class="qs-btn" onclick="changeDetailQty(1)">+</button>
+          </div>
+        </div>
+        <div class="detail-actions">
+          <button class="btn-add-to-cart" onclick="doAddToCart()">🛒 Add to Cart</button>
+          <button class="btn-wishlist" onclick="showToast('♡','Added to wishlist!')">♡</button>
+        </div>
+        <div class="detail-meta">
+          <div class="meta-row"><span class="meta-icon">🚚</span><span>Free delivery on orders over <span class="meta-strong">₹999</span></span></div>
+          <div class="meta-row"><span class="meta-icon">↩️</span><span><span class="meta-strong">30-day</span> easy return & exchange</span></div>
+          <div class="meta-row"><span class="meta-icon">🔒</span><span><span class="meta-strong">Secure payment</span> — 100% authentic products</span></div>
+        </div>
+      </div>`;
+
+    // Related products (same category, not same product)
+    const related = PRODUCTS.filter(x=>x.cat===p.cat && x.id!==p.id).slice(0,4);
+    document.getElementById('relatedGrid').innerHTML = related.map(r=>productCardHTML(r)).join('');
+  }
+
+  function selectThumb(el, icon){
+    document.querySelectorAll('.detail-thumb').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('mainImg').textContent = icon;
+  }
+
+  function selectSize(el){
+    document.querySelectorAll('.size-opt').forEach(s=>s.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function changeDetailQty(delta){
+    detailQty = Math.max(1, detailQty + delta);
+    document.getElementById('detailQtyVal').textContent = detailQty;
+  }
+
+  function doAddToCart(){
+    const selSize = document.querySelector('.size-opt.active');
+    addToCart({...currentProduct, variant: selSize ? selSize.textContent : ''}, detailQty);
+    openCart();
+  }
+
+  loadProduct();
+</script>
+</body>
+</html>
