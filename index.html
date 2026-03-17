@@ -9,23 +9,49 @@
 
 <header>
 <h1>MyStore</h1>
+
 <nav>
 <a href="index.html">Home</a>
-<a href="products.html">Products</a>
 <a href="cart.html">Cart</a>
-<a href="login.html">Login</a>
 </nav>
+
 </header>
 
-<section class="hero">
-<h2>Welcome to MyStore</h2>
-<p>Best products at the best price</p>
-<a href="products.html" class="btn">Shop Now</a>
+<h2 class="title">Featured Products</h2>
+
+<section class="product-container">
+
+<div class="product">
+<img src="images/laptop.jpg">
+<h3>Laptop</h3>
+<p>₹55,000</p>
+<button onclick="addToCart('Laptop',55000)">Add to Cart</button>
+</div>
+
+<div class="product">
+<img src="images/shoes.jpg">
+<h3>Running Shoes</h3>
+<p>₹2,500</p>
+<button onclick="addToCart('Running Shoes',2500)">Add to Cart</button>
+</div>
+
+<div class="product">
+<img src="images/headphones.jpg">
+<h3>Headphones</h3>
+<p>₹3,000</p>
+<button onclick="addToCart('Headphones',3000)">Add to Cart</button>
+</div>
+
+<div class="product">
+<img src="images/watch.jpg">
+<h3>Smart Watch</h3>
+<p>₹4,500</p>
+<button onclick="addToCart('Smart Watch',4500)">Add to Cart</button>
+</div>
+
 </section>
 
-<footer>
-<p>© 2026 MyStore</p>
-</footer>
+<script src="js/script.js"></script>
 
 </body>
 </html>
