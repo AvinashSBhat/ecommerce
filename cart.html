@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>LUXE Store — Cart</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<div id="cur"></div><div id="curR"></div>
+<div id="cartSidebarMount"></div>
+<div id="toastMount"></div>
+<div id="navMount"></div>
+
+<div class="page-wrap">
+
+  <!-- HEADER -->
+  <div class="cart-page-header">
+    <div class="section-label" style="color:rgba(232,93,38,.9)">Your Selections</div>
+    <h1>Shopping Cart</h1>
+    <p id="cartSubtitle">0 items in your cart</p>
+  </div>
+
+  <!-- LAYOUT -->
+  <div id="cartPageLayout" class="cart-page-layout">
+    <!-- Populated by JS -->
+  </div>
+
+  <div id="footerMount"></div>
+</div>
+
+<script src="app.js"></script>
+<script>
+  document.getElementById('navMount').innerHTML = renderNav('cart');
+  document.getElementById('cartSidebarMount').innerHTML = renderCartSidebarHTML();
+  document.getElementById('toastMount').innerHTML = renderToastHTML();
+  renderFooter('footerMount');
+
+  function renderCartPage(){
+    const layout   = document.getElementById('cartPageLayout');
+    const subtitle = document.getElementById('cartSubtitle');
+    const cart     = getCart();
+    const total    = getTotalItems();
+    subtitle.textContent = `${total} item${total!==1?'s':''} in your cart`;
+
+    if(!cart.length){
+      layout.innerHTML = `
+        <div class="cart-page-items" style="grid-column:1/-1">
+          <div class="cart-empty-page">
+            <div class="icon">🛒</div>
+            <h2>Your cart is empty</h2>
+            <p>Looks like you haven't added anything yet.</p>
+            <a class="btn-primary" href="products.html">Start Shopping →</a>
+          </div>
+        </div>`;
+      return;
+    }
+
+    const itemsHTML = cart.map(i=>`
+      <div class="cart-page-item">
+        <div class="cpi-img ${i.bg||'bg-peach'}">${i.icon}</div>
+        <div class="cpi-info">
+          <div class="item-cat">${i.cat}</div>
+          <div class="item-name">${i.name}</div>
+          ${i.variant ? `<div class="cpi-variant">Variant: ${i.variant}</div>` : ''}
+          <div style="display:flex;align-items:center;gap:16px;margin-top:12px">
+            <div class="qty-ctrl">
+              <button class="qty-btn" onclick="changeCartQty(${i.id},-1)">−</button>
+              <span class="qty-num">${i.qty}</span>
+              <button class="qty-btn" onclick="changeCartQty(${i.id},1)">+</button>
+            </div>
+            <button class="cpi-remove" onclick="removeFromCart(${i.id})">Remove</button>
+          </div>
+        </div>
+        <div class="cpi-right">
+          <div class="cpi-price">₹${(i.price*i.qty).toLocaleString('en-IN')}</div>
+          ${i.oldPrice ? `<div style="font-size:12px;color:var(--muted);text-decoration:line-through">₹${(i.oldPrice*i.qty).toLocaleString('en-IN')}</div>` : ''}
+        </div>
+      </div>`).join('');
+
+    const subtotal = getTotalPrice();
+    const shipping = subtotal >= 999 ? 0 : 99;
+    const gst      = Math.round(subtotal * 0.18);
+    const grandTotal = subtotal + shipping + gst;
+
+    layout.innerHTML = `
+      <div class="cart-page-items">${itemsHTML}</div>
+      <div class="order-summary">
+        <h3>Order Summary</h3>
+        <div class="summary-row"><span>Subtotal (${total} items)</span><span>₹${subtotal.toLocaleString('en-IN')}</span></div>
+        <div class="summary-row"><span>Shipping</span><span style="color:var(--success)">${shipping===0?'Free':'₹'+shipping}</span></div>
+        <div class="summary-row"><span>Taxes (18% GST)</span><span>₹${gst.toLocaleString('en-IN')}</span></div>
+        <div class="summary-row total"><span>Total</span><span>₹${grandTotal.toLocaleString('en-IN')}</span></div>
+        <div class="coupon-row">
+          <input class="coupon-input" id="couponInput" placeholder="Coupon code">
+          <button class="coupon-btn" onclick="applyCoupon()">Apply</button>
+        </div>
+        <button class="btn-checkout" onclick="placeOrder()">Place Order →</button>
+        <button class="btn-continue" onclick="window.location='products.html'">Continue Shopping</button>
+        <div class="secure-badges">
+          <span class="sec-badge">🔒 SSL Secure</span>
+          <span class="sec-badge">✅ Authentic</span>
+          <span class="sec-badge">↩️ Easy Returns</span>
+        </div>
+      </div>`;
+  }
+
+  function applyCoupon(){
+    const val = document.getElementById('couponInput').value.trim().toUpperCase();
+    if(val==='LUXE10')       showToast('🎉','Coupon LUXE10 applied! 10% off');
+    else if(val==='SAVE20')  showToast('🎉','Coupon SAVE20 applied! 20% off');
+    else                     showToast('❌','Invalid coupon code');
+  }
+
+  function placeOrder(){
+    localStorage.removeItem('luxe-cart');
+    updateCartDot();
+    renderCartSidebar();
+    showToast('✅','Order placed! Check your email.');
+    setTimeout(()=>{ window.location='index.html'; }, 2000);
+  }
+
+  // Override so qty changes re-render this page too
+  const _origRemove  = removeFromCart.bind({});
+  const _origChange  = changeCartQty.bind({});
+
+  renderCartPage();
+</script>
+</body>
+</html>
