@@ -1,57 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>My E-Commerce Store</title>
+<title>TechStore</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
 <header>
-<h1>MyStore</h1>
+<h1>TechStore</h1>
 
 <nav>
 <a href="index.html">Home</a>
+<a href="products.html">Products</a>
 <a href="cart.html">Cart</a>
 </nav>
-
 </header>
 
-<h2 class="title">Featured Products</h2>
+<section class="hero">
+<h2>Best Tech Products</h2>
+<p>Latest gadgets at best prices</p>
+<a href="products.html" class="btn">Shop Now</a>
+</section>
 
-<section class="product-container">
+<section class="featured">
+
+<h2>Featured Products</h2>
+
+<div class="product-grid">
 
 <div class="product">
 <img src="images/laptop.jpg">
 <h3>Laptop</h3>
 <p>₹55,000</p>
-<button onclick="addToCart('Laptop',55000)">Add to Cart</button>
-</div>
-
-<div class="product">
-<img src="images/shoes.jpg">
-<h3>Running Shoes</h3>
-<p>₹2,500</p>
-<button onclick="addToCart('Running Shoes',2500)">Add to Cart</button>
+<button onclick="addToCart(1)">Add to Cart</button>
 </div>
 
 <div class="product">
 <img src="images/headphones.jpg">
 <h3>Headphones</h3>
 <p>₹3,000</p>
-<button onclick="addToCart('Headphones',3000)">Add to Cart</button>
+<button onclick="addToCart(2)">Add to Cart</button>
 </div>
 
 <div class="product">
 <img src="images/watch.jpg">
 <h3>Smart Watch</h3>
 <p>₹4,500</p>
-<button onclick="addToCart('Smart Watch',4500)">Add to Cart</button>
+<button onclick="addToCart(3)">Add to Cart</button>
+</div>
+
 </div>
 
 </section>
 
-<script src="js/script.js"></script>
+<script src="js/products.js"></script>
+<script src="js/cart.js"></script>
 
 </body>
 </html>
