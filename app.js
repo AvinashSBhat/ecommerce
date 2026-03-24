@@ -459,9 +459,13 @@ function submitContactForm(e) {
     _formStarted = false;
 
     /* Redirect to the thank-you page.
+       URL is read from data-redirect on the <form> element so it can
+       be changed in HTML alone without touching JS.
        GTM dataLayer push above fires before navigation because
-       gtm.js flushes synchronously before window.location changes.  */
-    window.location.href = 'thank-you.html';
+       gtm.js flushes synchronously before window.location changes. */
+    const form = document.getElementById('contact-form');
+    const redirectUrl = (form && form.dataset.redirect) || 'thank-you.html';
+    window.location.href = redirectUrl;
   }, 1800);
 }
 
