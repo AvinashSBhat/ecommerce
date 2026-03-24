@@ -1,51 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-TTZV6K6Z');</script>
-<!-- End Google Tag Manager -->
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-6RHJ80FJB3"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-6RHJ80FJB3');
-</script>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>LUXE Store — Contact</title>
+
+  <!--
+    ══════════════════════════════════════════════════════════
+    GTM SETUP — Step 1 of 2
+    Replace GTM-XXXXXXX with your actual GTM container ID.
+    This script MUST be the first <script> inside <head>.
+    ══════════════════════════════════════════════════════════
+  -->
+  <script>
+    /* Initialise dataLayer before GTM loads so pushes are never lost */
+    window.dataLayer = window.dataLayer || [];
+    /* ── Replace GTM-XXXXXXX with your real container ID ── */
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-XXXXXXX');
+  </script>
+  <!-- End GTM head snippet -->
+
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TTZV6K6Z"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-  <!-- Cursor dots (styled by CSS, tracked by app.js) -->
+
+  <!--
+    GTM SETUP — Step 2 of 2 (noscript fallback)
+    Replace GTM-XXXXXXX with your actual container ID.
+    Must be the first element inside <body>.
+  -->
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
+      height="0" width="0" style="display:none;visibility:hidden"></iframe>
+  </noscript>
+  <!-- End GTM body snippet -->
+
+  <!-- Cursor dots -->
   <div id="cur"></div>
   <div id="curR"></div>
 
-  <!-- Shared chrome — injected by app.js on DOMContentLoaded -->
+  <!-- Shared chrome — all injected by app.js DOMContentLoaded -->
   <div id="cartSidebarMount"></div>
   <div id="toastMount"></div>
   <div id="navMount"></div>
 
   <!--
-    ┌─────────────────────────────────────────────────┐
-    │  contactPageMount — presence of this ID tells   │
-    │  app.js to run the contact-page init block.     │
-    └─────────────────────────────────────────────────┘
+    contactPageMount — app.js detects this ID and runs
+    contact-specific init: form wiring, live validation, FAQ.
   -->
   <div id="contactPageMount" class="page-wrap">
 
-    <!-- ══ HERO ══ -->
+    <!-- ══ PAGE HERO ══ -->
     <div class="page-hero">
       <div class="section-label">We're Here</div>
       <h1>Get in Touch</h1>
@@ -55,7 +65,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- ══ CONTACT LAYOUT ══ -->
     <div class="contact-layout">
 
-      <!-- INFO CARDS -->
+      <!-- LEFT: Info cards -->
       <div>
 
         <div class="contact-info-card">
@@ -71,8 +81,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <h3><div class="ci-icon-box">📞</div> Phone &amp; Email</h3>
           <p>
             <a href="tel:+918001234567">+91 800 123 4567</a><br>
-            <a href="mailto:support@luxestore.in">support@luxestore.in</a><br>
-            <a href="mailto:orders@luxestore.in">orders@luxestore.in</a>
+            <a href="/cdn-cgi/l/email-protection#cdbeb8bdbda2bfb98da1b8b5a8beb9a2bfa8e3a4a3"><span class="__cf_email__" data-cfemail="10636560607f6264507c65687563647f62753e797e">[email&#160;protected]</span></a><br>
+            <a href="/cdn-cgi/l/email-protection#6c031e08091e1f2c001914091f18031e09420502"><span class="__cf_email__" data-cfemail="513e2335342322113d24293422253e23347f383f">[email&#160;protected]</span></a>
           </p>
         </div>
 
@@ -107,106 +117,165 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       </div><!-- end info cards -->
 
-      <!-- ══ CONTACT FORM ══ -->
+      <!-- RIGHT: Contact form -->
       <div class="contact-form-wrap">
         <h2>Send Us a Message</h2>
         <p>We typically reply within 2 hours on business days.</p>
 
-        <!-- Row 1: First name / Last name -->
-        <div class="form-row">
+        <!--
+          GTM FORM WRAPPER
+          ─────────────────────────────────────────────────────────────
+          id="contact-form"          → GTM Form Submit trigger selector
+          name="contact_form"        → GTM built-in {{Form ID}} variable
+          data-gtm-form-id="contact_form"   → custom data layer variable
+          data-gtm-form-name="Contact Us"   → human-readable label in GA4
+          data-gtm-form-location="contact_page" → where on the site
+          ─────────────────────────────────────────────────────────────
+          NOTE: action="#" keeps the form fully JS-controlled.
+          app.js calls event.preventDefault() so no page navigation.
+        -->
+        <form
+          id="contact-form"
+          name="contact_form"
+          action="#"
+          method="post"
+          novalidate
+          data-gtm-form-id="contact_form"
+          data-gtm-form-name="Contact Us"
+          data-gtm-form-location="contact_page"
+        >
 
-          <div class="form-group" id="fg-fname">
-            <label class="form-label" for="fname">First Name *</label>
-            <input
-              class="form-input"
-              id="fname"
-              type="text"
-              name="fname"
-              placeholder="Priya"
-              autocomplete="given-name"
-            />
-            <div class="error-msg">Please enter your first name</div>
+          <!-- Row 1: First name / Last name -->
+          <div class="form-row">
+
+            <div class="form-group" id="fg-fname">
+              <label class="form-label" for="fname">First Name *</label>
+              <!--
+                data-gtm-field   → GTM CSS Selector Variable for field name
+                data-gtm-required → GTM can read this to flag required fields
+              -->
+              <input
+                class="form-input"
+                id="fname"
+                type="text"
+                name="fname"
+                placeholder="Priya"
+                autocomplete="given-name"
+                data-gtm-field="first_name"
+                data-gtm-required="true"
+              />
+              <div class="error-msg">Please enter your first name</div>
+            </div>
+
+            <div class="form-group" id="fg-lname">
+              <label class="form-label" for="lname">Last Name *</label>
+              <input
+                class="form-input"
+                id="lname"
+                type="text"
+                name="lname"
+                placeholder="Sharma"
+                autocomplete="family-name"
+                data-gtm-field="last_name"
+                data-gtm-required="true"
+              />
+              <div class="error-msg">Please enter your last name</div>
+            </div>
+
+          </div><!-- end row 1 -->
+
+          <!-- Row 2: Email / Phone -->
+          <div class="form-row">
+
+            <div class="form-group" id="fg-email">
+              <label class="form-label" for="cemail">Email *</label>
+              <input
+                class="form-input"
+                id="cemail"
+                type="email"
+                name="email"
+                placeholder="priya@email.com"
+                autocomplete="email"
+                data-gtm-field="email"
+                data-gtm-required="true"
+              />
+              <div class="error-msg">Please enter a valid email</div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="cphone">Phone</label>
+              <input
+                class="form-input"
+                id="cphone"
+                type="tel"
+                name="phone"
+                placeholder="+91 98765 43210"
+                autocomplete="tel"
+                data-gtm-field="phone"
+                data-gtm-required="false"
+              />
+            </div>
+
+          </div><!-- end row 2 -->
+
+          <!-- Subject -->
+          <div class="form-group" id="fg-subject">
+            <label class="form-label" for="csubject">Subject *</label>
+            <select
+              class="form-select"
+              id="csubject"
+              name="subject"
+              data-gtm-field="subject"
+              data-gtm-required="true"
+            >
+              <option value="">Select a topic…</option>
+              <option value="order">Order Enquiry</option>
+              <option value="return">Return / Exchange</option>
+              <option value="product">Product Question</option>
+              <option value="payment">Payment Issue</option>
+              <option value="feedback">Feedback</option>
+              <option value="other">Other</option>
+            </select>
+            <div class="error-msg">Please select a subject</div>
           </div>
 
-          <div class="form-group" id="fg-lname">
-            <label class="form-label" for="lname">Last Name *</label>
-            <input
-              class="form-input"
-              id="lname"
-              type="text"
-              name="lname"
-              placeholder="Sharma"
-              autocomplete="family-name"
-            />
-            <div class="error-msg">Please enter your last name</div>
+          <!-- Message -->
+          <div class="form-group" id="fg-msg">
+            <label class="form-label" for="cmsg">Your Message *</label>
+            <textarea
+              class="form-textarea"
+              id="cmsg"
+              name="message"
+              placeholder="Tell us how we can help you…"
+              data-gtm-field="message"
+              data-gtm-required="true"
+            ></textarea>
+            <div class="error-msg">Please enter your message (min. 10 characters)</div>
           </div>
 
-        </div><!-- end row 1 -->
+          <!--
+            Submit button
+            type="submit" lets GTM's native Form Submit trigger fire.
+            app.js intercepts with event.preventDefault() before
+            pushing to dataLayer and running custom validation.
+          -->
+          <button
+            class="form-submit"
+            id="formSubmitBtn"
+            type="submit"
+            data-gtm-element="form_submit_button"
+          >
+            <span id="submitText">Send Message →</span>
+          </button>
 
-        <!-- Row 2: Email / Phone -->
-        <div class="form-row">
+        </form><!-- end #contact-form -->
 
-          <div class="form-group" id="fg-email">
-            <label class="form-label" for="cemail">Email *</label>
-            <input
-              class="form-input"
-              id="cemail"
-              type="email"
-              name="email"
-              placeholder="priya@email.com"
-              autocomplete="email"
-            />
-            <div class="error-msg">Please enter a valid email</div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="cphone">Phone</label>
-            <input
-              class="form-input"
-              id="cphone"
-              type="tel"
-              name="phone"
-              placeholder="+91 98765 43210"
-              autocomplete="tel"
-            />
-          </div>
-
-        </div><!-- end row 2 -->
-
-        <!-- Subject -->
-        <div class="form-group" id="fg-subject">
-          <label class="form-label" for="csubject">Subject *</label>
-          <select class="form-select" id="csubject" name="subject">
-            <option value="">Select a topic…</option>
-            <option value="order">Order Enquiry</option>
-            <option value="return">Return / Exchange</option>
-            <option value="product">Product Question</option>
-            <option value="payment">Payment Issue</option>
-            <option value="feedback">Feedback</option>
-            <option value="other">Other</option>
-          </select>
-          <div class="error-msg">Please select a subject</div>
-        </div>
-
-        <!-- Message -->
-        <div class="form-group" id="fg-msg">
-          <label class="form-label" for="cmsg">Your Message *</label>
-          <textarea
-            class="form-textarea"
-            id="cmsg"
-            name="message"
-            placeholder="Tell us how we can help you…"
-          ></textarea>
-          <div class="error-msg">Please enter your message (min. 10 characters)</div>
-        </div>
-
-        <!-- Submit button — click wired by app.js -->
-        <button class="form-submit" id="formSubmitBtn" type="button">
-          <span id="submitText">Send Message →</span>
-        </button>
-
-        <!-- Success banner (hidden until form is submitted) -->
-        <div class="success-message" id="successMsg">
+        <!-- Success banner — revealed by app.js adding .show -->
+        <div
+          class="success-message"
+          id="successMsg"
+          data-gtm-element="form_success_banner"
+        >
           <span class="success-icon">✅</span>
           <div>
             <strong>Message sent successfully!</strong><br>
@@ -231,8 +300,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <span class="faq-icon">+</span>
           </div>
           <div class="faq-a">
-            Standard delivery takes 3–5 business days across India. Express delivery (1–2 days)
-            is available in major cities for an additional charge.
+            Standard delivery takes 3–5 business days across India.
+            Express delivery (1–2 days) is available in major cities for an additional charge.
           </div>
         </div>
 
@@ -292,15 +361,4 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
 
       </div><!-- end faq-grid -->
-    </div><!-- end faq-section -->
-
-    <!-- Footer injected by app.js -->
-    <div id="footerMount"></div>
-
-  </div><!-- end contactPageMount / page-wrap -->
-
-  <!-- Single script — all logic lives here -->
-  <script src="app.js"></script>
-
-</body>
-</html>
+    </div><!--
