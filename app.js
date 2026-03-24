@@ -293,9 +293,232 @@ function renderToastHTML(){
   return `<div class="toast" id="toast"><span id="toastIcon"></span><span id="toastMsg"></span></div>`;
 }
 
-/* ── INIT (run on every page load) ── */
-document.addEventListener('DOMContentLoaded', ()=>{
+/* ══════════════════════════════════════
+   CONTACT PAGE — GTM-instrumented form
+   ──────────────────────────────────────
+   All meaningful user interactions push
+   events to window.dataLayer so GTM can
+   fire GA4 events, pixels, or any tag.
+
+   Events pushed:
+     form_start         – first field interaction
+     form_field_complete – a required field passes validation
+     form_field_error   – a field fails validation (on blur)
+     form_submit        – button clicked (before validation)
+     form_validation_error – validation failed; lists bad fields
+     form_success       – submission confirmed (simulated send)
+══════════════════════════════════════ */
+
+/* ── Safe dataLayer push helper ── */
+function dlPush(eventData) {
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push(eventData);
+}
+
+/* ── Shared form metadata (reused in every push) ── */
+function formMeta() {
+  const form = document.getElementById('contact-form');
+  return {
+    form_id:       form ? form.getAttribute('data-gtm-form-id')       : 'contact_form',
+    form_name:     form ? form.getAttribute('data-gtm-form-name')     : 'Contact Us',
+    form_location: form ? form.getAttribute('data-gtm-form-location') : 'contact_page',
+  };
+}
+
+/* ── Form validation rules ── */
+const CONTACT_CHECKS = [
+  { id:'fname',    fgId:'fg-fname',    validate: v => v.trim().length >= 2,                  field:'first_name' },
+  { id:'lname',    fgId:'fg-lname',    validate: v => v.trim().length >= 2,                  field:'last_name'  },
+  { id:'cemail',   fgId:'fg-email',    validate: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), field:'email'      },
+  { id:'csubject', fgId:'fg-subject',  validate: v => v !== '',                              field:'subject'    },
+  { id:'cmsg',     fgId:'fg-msg',      validate: v => v.trim().length >= 10,                 field:'message'    },
+];
+
+/* ── Track whether form_start has been pushed already ── */
+let _formStarted = false;
+
+/* ── Live validation + field-level GTM events ── */
+function attachLiveValidation() {
+  CONTACT_CHECKS.forEach(c => {
+    const el = document.getElementById(c.id);
+    const fg = document.getElementById(c.fgId);
+    if (!el || !fg) return;
+
+    /* form_start — fires once on the very first interaction */
+    el.addEventListener('focus', () => {
+      if (!_formStarted) {
+        _formStarted = true;
+        dlPush({
+          event:          'form_start',
+          ...formMeta(),
+          form_field_name: c.field,
+        });
+      }
+    }, { once: false });
+
+    /* live visual feedback as user types */
+    el.addEventListener('input', () => {
+      const ok = c.validate(el.value);
+      el.classList.toggle('error',    !ok && el.value !== '');
+      fg.classList.toggle('has-error',!ok && el.value !== '');
+    });
+
+    /* form_field_complete / form_field_error on blur */
+    el.addEventListener('blur', () => {
+      if (el.value === '') return;           // skip untouched optional fields
+      const ok = c.validate(el.value);
+      if (ok) {
+        dlPush({
+          event:           'form_field_complete',
+          ...formMeta(),
+          form_field_name:  c.field,
+        });
+      } else {
+        dlPush({
+          event:           'form_field_error',
+          ...formMeta(),
+          form_field_name:  c.field,
+          error_message:    fg.querySelector('.error-msg')
+                              ? fg.querySelector('.error-msg').textContent.trim()
+                              : 'Validation error',
+        });
+      }
+    });
+  });
+}
+
+/* ── Submit handler — full GTM instrumentation ── */
+function submitContactForm(e) {
+  /* Prevent native form submission — we handle everything in JS */
+  if (e) e.preventDefault();
+
+  /* ── Push form_submit immediately on click ── */
+  dlPush({
+    event: 'form_submit',
+    ...formMeta(),
+  });
+
+  /* ── Run validation ── */
+  let valid = true;
+  const errorFields = [];
+
+  CONTACT_CHECKS.forEach(c => {
+    const el = document.getElementById(c.id);
+    const fg = document.getElementById(c.fgId);
+    if (!el || !fg) return;
+    const ok = c.validate(el.value);
+    el.classList.toggle('error',    !ok);
+    fg.classList.toggle('has-error',!ok);
+    if (!ok) {
+      valid = false;
+      errorFields.push(c.field);
+    }
+  });
+
+  /* ── Validation failed ── */
+  if (!valid) {
+    dlPush({
+      event:               'form_validation_error',
+      ...formMeta(),
+      error_fields:         errorFields,          // array of field names
+      error_fields_count:   errorFields.length,
+    });
+    showToast('❌', 'Please fill in all required fields.');
+    return;
+  }
+
+  /* ── Validation passed — start simulated send ── */
+  const btn  = document.getElementById('formSubmitBtn');
+  const text = document.getElementById('submitText');
+  if (!btn || !text) return;
+
+  btn.disabled = true;
+  text.textContent = 'Sending…';
+
+  /* Simulate async send (replace setTimeout with real fetch/XHR in production) */
+  setTimeout(() => {
+    btn.disabled = false;
+    text.textContent = 'Send Message →';
+
+    /* Reveal success banner */
+    const successMsg = document.getElementById('successMsg');
+    if (successMsg) successMsg.classList.add('show');
+
+    /* ── form_success — the key conversion event for GTM ── */
+    dlPush({
+      event:           'form_success',
+      ...formMeta(),
+      /* Non-PII subject value so you can segment in GA4 */
+      form_subject:    document.getElementById('csubject')
+                         ? document.getElementById('csubject').value
+                         : '',
+    });
+
+    /* Clear all fields and reset tracking flag */
+    CONTACT_CHECKS.forEach(c => {
+      const el = document.getElementById(c.id);
+      if (el) { el.value = ''; el.classList.remove('error'); }
+      const fg = document.getElementById(c.fgId);
+      if (fg) fg.classList.remove('has-error');
+    });
+    _formStarted = false;
+
+    showToast('✅', 'Message sent successfully!');
+  }, 1800);
+}
+
+/* ── FAQ accordion ── */
+function toggleFaq(el) {
+  document.querySelectorAll('.faq-item.open').forEach(item => {
+    if (item !== el) item.classList.remove('open');
+  });
+  el.classList.toggle('open');
+}
+
+function initFaq() {
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.addEventListener('click', () => toggleFaq(item));
+  });
+}
+
+/* ══════════════════════════════════════
+   INIT — runs on every page load
+══════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+
+  /* ── 1. Mount shared chrome for ALL pages ── */
+  const navEl   = document.getElementById('navMount');
+  const cartEl  = document.getElementById('cartSidebarMount');
+  const toastEl = document.getElementById('toastMount');
+  const footEl  = document.getElementById('footerMount');
+
+  /* Detect which page we're on by filename */
+  const page = location.pathname.split('/').pop().replace('.html','') || 'index';
+  const activeKey = page === 'index' || page === '' ? 'home'
+                  : page === 'product-detail'       ? 'products'
+                  : page;                             /* products | cart | contact */
+
+  if (navEl)   navEl.innerHTML   = renderNav(activeKey);
+  if (cartEl)  cartEl.innerHTML  = renderCartSidebarHTML();
+  if (toastEl) toastEl.innerHTML = renderToastHTML();
+  if (footEl)  renderFooter('footerMount');
+
+  /* ── 2. Cart UI (needs #cartDot injected above) ── */
   updateCartDot();
   renderCartSidebar();
+
+  /* ── 3. Scroll reveal ── */
   setupReveal();
+
+  /* ── 4. Contact-page extras ── */
+  if (document.getElementById('contactPageMount')) {
+    attachLiveValidation();
+    initFaq();
+
+    /* Listen on the <form> submit event (fires for both button click
+       and Enter-key submission) so e.preventDefault() can block
+       native navigation. GTM's Form Submit trigger also fires here. */
+    const form = document.getElementById('contact-form');
+    if (form) form.addEventListener('submit', submitContactForm);
+  }
 });
