@@ -440,21 +440,16 @@ function submitContactForm(e) {
     btn.disabled = false;
     text.textContent = 'Send Message →';
 
-    /* Reveal success banner */
-    const successMsg = document.getElementById('successMsg');
-    if (successMsg) successMsg.classList.add('show');
-
     /* ── form_success — the key conversion event for GTM ── */
     dlPush({
-      event:           'form_success',
+      event:        'form_success',
       ...formMeta(),
-      /* Non-PII subject value so you can segment in GA4 */
-      form_subject:    document.getElementById('csubject')
-                         ? document.getElementById('csubject').value
-                         : '',
+      form_subject: document.getElementById('csubject')
+                      ? document.getElementById('csubject').value
+                      : '',
     });
 
-    /* Clear all fields and reset tracking flag */
+    /* Clear fields and reset tracking flag before leaving */
     CONTACT_CHECKS.forEach(c => {
       const el = document.getElementById(c.id);
       if (el) { el.value = ''; el.classList.remove('error'); }
@@ -463,7 +458,10 @@ function submitContactForm(e) {
     });
     _formStarted = false;
 
-    showToast('✅', 'Message sent successfully!');
+    /* Redirect to the thank-you page.
+       GTM dataLayer push above fires before navigation because
+       gtm.js flushes synchronously before window.location changes.  */
+    window.location.href = 'thank-you.html';
   }, 1800);
 }
 
@@ -494,9 +492,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* Detect which page we're on by filename */
   const page = location.pathname.split('/').pop().replace('.html','') || 'index';
-  const activeKey = page === 'index' || page === '' ? 'home'
-                  : page === 'product-detail'       ? 'products'
-                  : page;                             /* products | cart | contact */
+  const activeKey = page === 'index' || page === ''  ? 'home'
+                  : page === 'product-detail'         ? 'products'
+                  : page === 'thank-you'              ? 'contact'
+                  : page;                              /* products | cart | contact */
 
   if (navEl)   navEl.innerHTML   = renderNav(activeKey);
   if (cartEl)  cartEl.innerHTML  = renderCartSidebarHTML();
