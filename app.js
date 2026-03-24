@@ -466,7 +466,7 @@ function submitContactForm(e) {
     const form = document.getElementById('contact-form');
     const redirectUrl = (form && form.dataset.redirect) || 'thank-you.html';
     window.location.href = redirectUrl;
-  }, 1800);
+  }, 300);
 }
 
 /* ── FAQ accordion ── */
