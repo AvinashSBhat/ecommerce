@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>LUXE Store — Thank You</title>
+
+  <!--
+    GTM head snippet — replace GTM-XXXXXXX with your container ID.
+    Keeping GTM on this page is essential so form_success and
+    page_view events are fired and attributed correctly.
+  -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-XXXXXXX');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+  <!-- GTM noscript fallback -->
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
+      height="0" width="0" style="display:none;visibility:hidden"></iframe>
+  </noscript>
+
+  <!-- Cursor dots -->
+  <div id="cur"></div>
+  <div id="curR"></div>
+
+  <!-- Shared chrome injected by app.js -->
+  <div id="cartSidebarMount"></div>
+  <div id="toastMount"></div>
+  <div id="navMount"></div>
+
+  <!-- Thank-you page root — app.js detects this page by filename -->
+  <div class="thankyou-page page-wrap">
+
+    <!-- ══ HERO ══ -->
+    <section class="ty-hero">
+
+      <!-- Animated rings -->
+      <div class="ty-ring ty-ring-1"></div>
+      <div class="ty-ring ty-ring-2"></div>
+      <div class="ty-ring ty-ring-3"></div>
+
+      <div class="ty-card">
+
+        <!-- Success icon -->
+        <div class="ty-icon-wrap">✅</div>
+
+        <!-- Headline -->
+        <h1 class="ty-heading">
+          Thank <em>You!</em>
+        </h1>
+
+        <!-- Subtext -->
+        <p class="ty-sub">
+          Your message has been received. Our team reviews every enquiry carefully
+          and will get back to you within <strong>2 business hours</strong>.
+          We look forward to helping you.
+        </p>
+
+        <!-- Info cards -->
+        <div class="ty-cards">
+
+          <div class="ty-info-card">
+            <span class="ty-info-icon">📧</span>
+            <div class="ty-info-title">Check Your Email</div>
+            <div class="ty-info-desc">A confirmation copy has been sent to your inbox.</div>
+          </div>
+
+          <div class="ty-info-card">
+            <span class="ty-info-icon">⏱</span>
+            <div class="ty-info-title">Response Time</div>
+            <div class="ty-info-desc">We reply within 2 hours on Mon–Fri, 9 AM–8 PM.</div>
+          </div>
+
+          <div class="ty-info-card">
+            <span class="ty-info-icon">📞</span>
+            <div class="ty-info-title">Need It Faster?</div>
+            <div class="ty-info-desc">Call us on +91 800 123 4567 for urgent queries.</div>
+          </div>
+
+        </div><!-- end ty-cards -->
+
+        <!-- CTA buttons -->
+        <div class="ty-actions">
+          <a class="btn-primary" href="index.html">← Back to Home</a>
+          <a class="btn-secondary" href="products.html">Browse Products</a>
+        </div>
+
+      </div><!-- end ty-card -->
+    </section><!-- end ty-hero -->
+
+    <!-- ══ WHAT HAPPENS NEXT TIMELINE ══ -->
+    <section class="ty-timeline">
+      <div class="ty-timeline-inner">
+        <div class="ty-timeline-title">
+          What happens <span>next?</span>
+        </div>
+
+        <div class="ty-steps">
+
+          <div class="ty-step done">
+            <div class="ty-step-dot">✅</div>
+            <div class="ty-step-label">Form Received</div>
+            <div class="ty-step-desc">Your message landed safely in our inbox just now.</div>
+          </div>
+
+          <div class="ty-step active">
+            <div class="ty-step-dot">👀</div>
+            <div class="ty-step-label">Under Review</div>
+            <div class="ty-step-desc">Our team reads and categorises your enquiry.</div>
+          </div>
+
+          <div class="ty-step pending">
+            <div class="ty-step-dot">✉️</div>
+            <div class="ty-step-label">We Respond</div>
+            <div class="ty-step-desc">A personalised reply lands in your inbox within 2 hours.</div>
+          </div>
+
+          <div class="ty-step pending">
+            <div class="ty-step-dot">🤝</div>
+            <div class="ty-step-label">Resolved</div>
+            <div class="ty-step-desc">Your issue is sorted — happy shopping with LUXE!</div>
+          </div>
+
+        </div><!-- end ty-steps -->
+      </div>
+    </section><!-- end ty-timeline -->
+
+    <!-- ══ STAY CONNECTED ══ -->
+    <section class="ty-socials-strip">
+      <strong>Stay in the Loop</strong>
+      <p>Follow us for new arrivals, flash sales, and style inspiration — delivered daily.</p>
+      <div class="ty-social-btns">
+        <a class="ty-soc-btn" href="#">𝕏 &nbsp;Twitter</a>
+        <a class="ty-soc-btn" href="#">📘 Facebook</a>
+        <a class="ty-soc-btn" href="#">📷 Instagram</a>
+        <a class="ty-soc-btn" href="#">▶️ YouTube</a>
+      </div>
+    </section>
+
+    <!-- Footer injected by app.js -->
+    <div id="footerMount"></div>
+
+  </div><!-- end thankyou-page -->
+
+  <!-- Single script — all logic in app.js -->
+  <script src="app.js"></script>
+
+</body>
+</html>
